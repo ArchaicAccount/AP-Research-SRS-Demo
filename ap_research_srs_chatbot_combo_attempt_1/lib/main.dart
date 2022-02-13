@@ -1,3 +1,4 @@
+import 'package:ap_research_srs_chatbot_combo_attempt_1/deckHandler.dart';
 import 'package:ap_research_srs_chatbot_combo_attempt_1/vocabWord.dart';
 import 'package:flutter/material.dart';
 
@@ -36,21 +37,21 @@ class _MyHomePageState extends State<MyHomePage> {
   int runningThrough = 0;
 
   //declerations
+  var practiceDeck = new DeckHandler();
 
-  List srsList = [
-    VocabWord("monkey", DateTime.now()),
-    VocabWord("cookie", DateTime.now()),
-    VocabWord("testCase", DateTime.now())
-  ];
+  //practiceDeck.addWord("monkey");
+
   //creates a text editing controller that allows us to handle inputs from users and assign new words
   TextEditingController keyboardMonkey = TextEditingController();
 
   void _incrementCounter() {
     setState(() {
-      if (runningThrough < srsList.length - 1) {
+      print(practiceDeck.currentReviews[1].word);
+      if (runningThrough < practiceDeck.currentReviews.length - 1) {
         runningThrough++;
       }
-      _displayedWord = srsList[runningThrough].word;
+      _displayedWord = practiceDeck.currentReviews[runningThrough].word;
+      print(_displayedWord);
     });
   }
 
@@ -59,13 +60,13 @@ class _MyHomePageState extends State<MyHomePage> {
       if (runningThrough > 0) {
         runningThrough--;
       }
-      _displayedWord = srsList[runningThrough].word;
+      _displayedWord = practiceDeck.currentReviews[runningThrough].word;
     });
   }
 
   //creates a new object with the word in the bar and the
   void _newWord() {
-    srsList.add(VocabWord(keyboardMonkey.text, DateTime.now()));
+    practiceDeck.addWord((VocabWord(keyboardMonkey.text, DateTime.now())));
     keyboardMonkey.clear();
   }
 

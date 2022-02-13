@@ -8,6 +8,7 @@ class VocabWord {
   VocabWord(this.word, this.lastRecallDate);
 
   //updates the current interval of the word based off weather or not the answer was correct
+  //correct should be weather or not the question was answer correctly
   updateInterval(bool correct) {
     if (correct) {
       currentInterval++;
@@ -17,6 +18,7 @@ class VocabWord {
     }
   }
 
+  //returns the word value of the current object, idk why I need this I shouldn't but the code wasn't workign useing the normal x.word method so i guess it stays...
   getWord() {
     return word;
   }
@@ -29,7 +31,6 @@ class VocabWord {
 
   //updates the last recall date to the current date
   updateRecallDate() {
-    //need to make it so it doesnt just put the whole shitty string
     lastRecallDate = DateTime.now();
   }
 }
