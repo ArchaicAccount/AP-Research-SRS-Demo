@@ -1,7 +1,7 @@
 # AP Research SRS Demo
  A demo of the SRS system I'm building for my AP Research Project
 
-# ap_research_srs_chatbot_combo_attempt_1
+# ap_research_srs_attempt_1
 
 A new Flutter project.
 
