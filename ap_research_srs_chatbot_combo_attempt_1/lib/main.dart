@@ -33,25 +33,30 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  var _displayedWord = "";
+  var _displayedWord;
   int runningThrough = 0;
-
+  //used to add 3 test words to the list, remove once done testing
+  bool hasntOccured = true;
   //declerations
   var practiceDeck = new DeckHandler();
 
-  //practiceDeck.addWord("monkey");
+  //temp words to test the srs systems with
 
   //creates a text editing controller that allows us to handle inputs from users and assign new words
   TextEditingController keyboardMonkey = TextEditingController();
 
   void _incrementCounter() {
     setState(() {
-      print(practiceDeck.currentReviews[1].word);
-      if (runningThrough < practiceDeck.currentReviews.length - 1) {
-        runningThrough++;
+      if (practiceDeck.currentReviews.length > 1) {
+        if (runningThrough < practiceDeck.currentReviews.length - 1) {
+          runningThrough++;
+        }
+        _displayedWord = practiceDeck.currentReviews[runningThrough].getWord();
+        print(_displayedWord);
+      } else {
+        // this is temp, need to replace with some sort of onscreen alert cause the user will never see this rn
+        print("no words need to be reviewed right now!");
       }
-      _displayedWord = practiceDeck.currentReviews[runningThrough].word;
-      print(_displayedWord);
     });
   }
 
@@ -66,7 +71,19 @@ class _MyHomePageState extends State<MyHomePage> {
 
   //creates a new object with the word in the bar and the
   void _newWord() {
-    practiceDeck.addWord((VocabWord(keyboardMonkey.text, DateTime.now())));
+    practiceDeck.addWord(keyboardMonkey.text);
+    //temp if statement that adds 3 words to the list for testing purposes
+    if (hasntOccured) {
+      practiceDeck.practiceWordGen();
+      practiceDeck.pendingReviews[1].setInterval(3);
+      practiceDeck.pendingReviews[2].setInterval(2);
+      practiceDeck.reviewed(0);
+      practiceDeck.reviewed(0);
+      practiceDeck.reviewed(0);
+      practiceDeck.reviewed(0);
+
+      hasntOccured = false;
+    }
     keyboardMonkey.clear();
   }
 
@@ -105,7 +122,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 labelText: 'New Word',
               ),
               controller: keyboardMonkey,
-            )
+            ),
+            CheckReviewsButton(practiceDeck)
           ],
         ),
       ),
@@ -113,6 +131,7 @@ class _MyHomePageState extends State<MyHomePage> {
       //   onPressed: _newWord,
       //   child: Text("Add a word"),
       // ),
+
       floatingActionButton: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         mainAxisAlignment: MainAxisAlignment.end,
@@ -138,5 +157,22 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
     ); // This trailing comma makes auto-formatting nicer for build methods.
+  }
+}
+
+class CheckReviewsButton extends StatelessWidget {
+  var theDeckToCheck;
+
+  CheckReviewsButton(this.theDeckToCheck);
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      onPressed: () {
+        theDeckToCheck.recentReviewsCheck();
+      },
+      //change this text it's bad and boring and doesnt convey the right messag
+      child: const Text('Re-sort'),
+    );
   }
 }

@@ -1,11 +1,11 @@
 class VocabWord {
   //declerations
-  var word;
+  String word;
   int currentInterval = 0;
   var lastRecallDate;
 
   //constructor
-  VocabWord(this.word, this.lastRecallDate);
+  VocabWord(String this.word, var this.lastRecallDate);
 
   //updates the current interval of the word based off weather or not the answer was correct
   //correct should be weather or not the question was answer correctly
@@ -16,6 +16,11 @@ class VocabWord {
     } else {
       currentInterval = 0;
     }
+  }
+
+  //temp function for testing purposes
+  setInterval(int newInterval) {
+    currentInterval = newInterval;
   }
 
   //returns the word value of the current object, idk why I need this I shouldn't but the code wasn't workign useing the normal x.word method so i guess it stays...
