@@ -1,6 +1,8 @@
 import 'package:ap_research_srs_chatbot_combo_attempt_1/vocabWord.dart';
 import 'package:flutter/material.dart';
 
+import 'deckHandler.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -34,39 +36,45 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   var _displayedWord = "";
   int runningThrough = 0;
+  //declerations
+  var practiceDeck = new DeckHandler();
 
   //declerations
 
-  List srsList = [
-    VocabWord("monkey", DateTime.now()),
-    VocabWord("cookie", DateTime.now()),
-    VocabWord("testCase", DateTime.now())
-  ];
   //creates a text editing controller that allows us to handle inputs from users and assign new words
   TextEditingController keyboardMonkey = TextEditingController();
 
+  //replacing this with a randomzier instead of up down
   void _incrementCounter() {
     setState(() {
-      if (runningThrough < srsList.length - 1) {
-        runningThrough++;
+      if (practiceDeck.currentReviews.length > 1) {
+        _displayedWord = practiceDeck.getNextReview();
+        // if (runningThrough < practiceDeck.currentReviews.length - 1) {
+        //   runningThrough++;
+        // }
+        // _displayedWord = practiceDeck.currentReviews[runningThrough].getWord();
+        // print(_displayedWord);
+      } else {
+        // this is temp, need to replace with some sort of onscreen alert cause the user will never see this rn
+        print("no words need to be reviewed right now!");
       }
-      _displayedWord = srsList[runningThrough].word;
-    });
-  }
-
-  void _decrementCounter() {
-    setState(() {
-      if (runningThrough > 0) {
-        runningThrough--;
-      }
-      _displayedWord = srsList[runningThrough].word;
     });
   }
 
   //creates a new object with the word in the bar and the
   void _newWord() {
-    srsList.add(VocabWord(keyboardMonkey.text, DateTime.now()));
+    practiceDeck.addWord(keyboardMonkey.text);
+
     keyboardMonkey.clear();
+    //temp if statement that adds 3 words to the list for testing purposes
+
+    if (practiceDeck.currentReviews.length <= 1) {
+      practiceDeck.practiceWordGen();
+      practiceDeck.reviewed(0);
+      practiceDeck.reviewed(0);
+      practiceDeck.reviewed(0);
+      practiceDeck.reviewed(0);
+    }
   }
 
   @override
@@ -88,15 +96,6 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_displayedWord',
               style: Theme.of(context).textTheme.headline6,
             ),
-            // const TextField(
-            //   onSubmitted: (String value) async {
-            //     _newWord(value);
-            //   }
-            //   decoration: InputDecoration(
-            //     border: OutlineInputBorder();
-            //     labelText: 'Add a Word';
-            //   )
-            // ),
             TextField(
               obscureText: false,
               decoration: InputDecoration(
@@ -104,14 +103,19 @@ class _MyHomePageState extends State<MyHomePage> {
                 labelText: 'New Word',
               ),
               controller: keyboardMonkey,
+            ),
+            CheckReviewsButton(practiceDeck),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                CheckReviewsButton(practiceDeck),
+                CheckReviewsButton(practiceDeck),
+                correctGuessButton(practiceDeck, runningThrough)
+              ],
             )
           ],
         ),
       ),
-      //  elevatedButton: ElevatedButton(
-      //   onPressed: _newWord,
-      //   child: Text("Add a word"),
-      // ),
       floatingActionButton: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         mainAxisAlignment: MainAxisAlignment.end,
@@ -123,12 +127,14 @@ class _MyHomePageState extends State<MyHomePage> {
             child: const Icon(Icons.add),
           ),
           const SizedBox(height: 4),
-          FloatingActionButton(
-            onPressed: _decrementCounter,
-            tooltip: 'Increment',
-            child: const Icon(Icons.remove),
-          ),
-          const SizedBox(height: 4),
+
+          // //increment/decrement are temp bottons that should be removed before shipping, only used to check whats in the list
+          // FloatingActionButton(
+          //   onPressed: _decrementCounter,
+          //   tooltip: 'Increment',
+          //   child: const Icon(Icons.remove),
+          // ),
+          // const SizedBox(height: 4),
           FloatingActionButton(
             onPressed: _newWord,
             tooltip: 'Increment',
@@ -137,5 +143,43 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
     ); // This trailing comma makes auto-formatting nicer for build methods.
+  }
+}
+
+class CheckReviewsButton extends StatelessWidget {
+  var theDeckToCheck;
+
+  CheckReviewsButton(this.theDeckToCheck);
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      onPressed: () {
+        theDeckToCheck.recentReviewsCheck();
+      },
+      //change this text it's bad and boring and doesnt convey the right messag
+      child: const Text('Re-sort'),
+    );
+  }
+}
+
+class correctGuessButton extends StatelessWidget {
+  var theDecktoCheck;
+  int wordLocationToCheck;
+
+  correctGuessButton(this.theDecktoCheck, this.wordLocationToCheck);
+
+  //for now we just have a correct incorrect but possibly add a scaling typing thing with direct interval editing so you can be like "sorta got it", "didnt got it", "got it"
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      onPressed: () {
+        theDecktoCheck.reviewed(wordLocationToCheck);
+
+        //consider adding somthing that will change the current word listed after button is clicked, technically not necssary but would make program much more user freindly
+      },
+      //change this text it's bad and boring and doesnt convey the right messag
+      child: const Text('Correct'),
+    );
   }
 }

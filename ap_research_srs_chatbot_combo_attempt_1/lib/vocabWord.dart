@@ -1,16 +1,21 @@
+import 'package:flutter/animation.dart';
+
 class VocabWord {
   //declerations
-  var word;
-  int currentInterval = 0;
+  String word;
+  int currentInterval;
   var lastRecallDate;
 
   //constructor
-  VocabWord(this.word, this.lastRecallDate);
+  VocabWord(this.word, this.lastRecallDate, this.currentInterval);
 
   //updates the current interval of the word based off weather or not the answer was correct
   updateInterval(bool correct) {
     if (correct) {
-      currentInterval++;
+      //need a diffrent exception handler or way to make this scalable maybe just like random var they all have idk
+      if (currentInterval < 3) {
+        currentInterval++;
+      }
       updateRecallDate();
     } else {
       currentInterval = 0;
@@ -24,6 +29,7 @@ class VocabWord {
   //returns how long ago the last recall was in # of days (int)
   daysSinceLastRecall() {
     var x = DateTime.now().difference(lastRecallDate);
+
     return x.inDays;
   }
 
